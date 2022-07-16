@@ -35,10 +35,10 @@ function App() {
        <Heading text="WebFork Categories" />
        <HotAccessoriesMenu/>
 
-       <Route path={"/"} component= {<HotAccessories music={data.hotAccessories.music} musicCover={data.hotAccessoriesCover.music} />} />
-      {/* <Route exact path="/music">
+
+      <Route exact path="/music">
         <HotAccessories music={data.hotAccessories.music} musicCover={data.hotAccessoriesCover.music} />
-      </Route> */}
+      </Route>
 
       <Route exact path="/smartDevice">
        <HotAccessories smartDevice={data.hotAccessories.smartDevice} smartDeviceCover={data.hotAccessoriesCover.smartDevice}  />
