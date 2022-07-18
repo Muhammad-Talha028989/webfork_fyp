@@ -16,7 +16,7 @@ const About = () => {
       <div className="right">
         <h3>
           WebFork has started its journey with the promise to be the hub of the
-          best templates in early 2014. Our creative designers and dedicated
+          best templates in early 2022. Our creative designers and dedicated
           developers work with the soul to develop high-quality themes and
           templates to take your website to a new height. You can easily pick
           any free responsive bootstrap themes and templates with a fresh design

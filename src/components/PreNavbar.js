@@ -16,7 +16,7 @@ const PreNavbar = () => {
              <div>
              <a  href="/#">SIGN IN</a> <span>|</span>
                  <a  href="/#">SIGN UP</a> <span>|</span>
-                 <a  href=""> {cartIcon} CART (0)</a>
+                 <a  href="/#"> {cartIcon} CART (0)</a>
                
              </div>
             
