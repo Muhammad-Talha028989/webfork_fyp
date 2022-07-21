@@ -1,0 +1,27 @@
+{
+  "name": "webfork-fyp-backend",
+  "version": "1.0.0",
+  "description": "Back-end of project",
+  "main": "index.server.js",
+  "scripts": {
+    "start": "nodemon index.server.js"
+  },
+  "author": "Muhammad Talha",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.27.2",
+    "body-parser": "^1.20.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1",
+    "express-jwt": "^7.7.5",
+    "express-jwt-permissions": "^1.3.6",
+    "express-openid-connect": "^2.7.3",
+    "jwks-rsa": "^2.1.4",
+    "nodemon": "^2.0.19"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.12",
+    "@types/express": "^4.17.13"
+  }
+}

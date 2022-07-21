@@ -1,48 +1,47 @@
-import './App.css';
-import PreNavbar from './components/PreNavbar';
-import Navbar from "./components/Navbar.js"
-import {  BrowserRouter as Router, Route} from "react-router-dom"
-import Hero from './components/Hero';
-import data from "./data/data.json"
-import Heading from './components/Heading.js'
-import Footer from './components/Footer';
-import About from './components/About';
-import Whatsapp from './components/Whatsapp';
-import Contact from './components/Contact';
-import Card  from './components/Card';
-import Blogs from './components/Blogs';
-import Product from './components/Product';
+import "./App.css";
+import React, { useEffect} from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+
+import Blogs from "./components/Blogs";
+import HomePage from "./components/home/homepage";
+import axios from "axios";
+import { useAuth0 } from "@auth0/auth0-react";
 
 function App() {
+  const { getAccessTokenSilently, isAuthenticated, user } = useAuth0();
+
+  useEffect(() => {
+    const token = isAuthenticated ? getAccessTokenSilently() : null;
+    const getResponse = async () => {
+      try {
+        await axios
+          .get("/", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          })
+          .then((response) => console.log(response?.data))
+          .catch((error) => console.log(error));
+        const requires = await axios.post("/", {
+          data: {
+            user,
+          },
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    isAuthenticated && getResponse().catch((e) => console.log(e));
+  }, [getAccessTokenSilently, isAuthenticated]);
 
   return (
-  <Router>
-
-
-       <PreNavbar/>
-       <Navbar />
-
-       <Hero />
-       
-       <Heading text="WebFork Features" />
-       <Card />
-
-       <Heading text="WebFork Categories" />
-       <Product />
-
-      <Route path="/Blogs" component={<Blogs/>}/>
-
-  <Heading text="About Us" />
-  <About />
-
-  <Heading text="Contact Us" />
-
-  <Contact />
-
-  <Whatsapp />
-
-  <Footer footer={data.footer} />
-  </Router>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/Blogs" element={<Blogs />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
