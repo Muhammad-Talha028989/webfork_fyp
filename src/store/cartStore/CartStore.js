@@ -10,6 +10,7 @@ let cartStore = (set) => ({
       name: "Gym-Free",
       category: "Gym",
       price: "50Rs",
+      qty: 1,
       description:
         "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quaerat unde beatae fuga ipsa? Temporibus, asperiores!",
     },

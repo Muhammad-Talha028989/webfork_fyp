@@ -3,6 +3,7 @@ import { Button, Col, Form, Image, ListGroup, Row } from "react-bootstrap";
 import { AiFillDelete } from "react-icons/ai";
 import useCartState from "../store/cartStore/CartStore";
 // import Rating from "./Rating";
+import "../styles/Cart.css";
 
 const Cart = () => {
   const CartState = useCartState((state) => state.CartState);
@@ -13,7 +14,10 @@ const Cart = () => {
   useEffect(() => {
     setCart(CartState);
     setTotal(
-      cart?.reduce((acc, curr) => acc + Number(curr.price) * curr.qty, 0),
+      CartState?.reduce(
+        (acc, curr) => acc + Number(curr?.price) * curr?.qty,
+        0,
+      ),
     );
   }, [CartState, cart]);
 
@@ -61,7 +65,9 @@ const Cart = () => {
       </div>
       <div className="filters summary">
         <span className="title">Subtotal ({cart?.length}) items</span>
-        <span style={{ fontWeight: 700, fontSize: 20 }}>Total: ₹ {total}</span>
+        <span
+          style={{ fontWeight: 700, fontSize: 20 }}
+        >{` Total: ₹ ${total}`}</span>
         <Button type="button" disabled={cart?.length === 0}>
           Proceed to Checkout
         </Button>
