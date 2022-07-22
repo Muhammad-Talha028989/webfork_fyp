@@ -12,29 +12,29 @@ function App() {
   const { getAccessTokenSilently, isAuthenticated, user } = useAuth0();
 
   useEffect(() => {
-    const token = isAuthenticated ? getAccessTokenSilently() : null;
     const getResponse = async () => {
+      const token = isAuthenticated && (await getAccessTokenSilently());
       try {
-        await axios
-          .get("/", {
-            headers: {
-              Authorization: `Bearer ${token}`,
+        await axios.post(
+          "/",
+          {
+            data: {
+              user,
             },
-          })
-          .then((response) => console.log(response?.data))
-          .catch((error) => console.log(error));
-        const requires = await axios.post("/", {
-          data: {
-            user,
           },
-        });
+          {
+            headers: {
+              authorization: `Bearer ${token}`,
+            },
+          },
+        );
       } catch (error) {
         console.log(error);
       }
     };
 
     isAuthenticated && getResponse().catch((e) => console.log(e));
-  }, [getAccessTokenSilently, isAuthenticated]);
+  }, [getAccessTokenSilently, isAuthenticated, user]);
 
   return (
     <BrowserRouter>
