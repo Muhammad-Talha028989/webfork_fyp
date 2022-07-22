@@ -1,12 +1,23 @@
 require("dotenv").config();
+
 const express = require("express");
+
 const cors = require("cors");
-// const { auth } = require("express-openid-connect");
+
+//? const { auth } = require("express-openid-connect");
+
+const helmet = require("helmet");
+
 const bodyParser = require("body-parser");
 
+const ConnectToMongodb = require("./Model/Connectivity/Connect-To-Mongodb");
+
 const server = express();
+
 const axios = require("axios");
+
 const jwt = require("express-jwt").expressjwt;
+
 const jwks = require("jwks-rsa");
 
 var jwtCheck = jwt({
@@ -22,16 +33,21 @@ var jwtCheck = jwt({
 }).unless({ path: ["/"] });
 
 // //* auth router attaches /login, /logout, and /callback routes to the baseURL
-// server.use(auth(config));
+//? server.use(auth(config));
 server.use(bodyParser.urlencoded({ extended: false }));
 server.use(bodyParser.json({}));
 server.use(express.json({}));
 
 server.use(cors());
+server.use(helmet());
 
 let port = process.env.PORT || process.env._ALT_PORT;
 
 server.use(jwtCheck);
+
+//?
+ConnectToMongodb("webfork", "webfork", "WebFork").catch((e) => console.log(e));
+//?
 
 server.get("/authorized", function (req, res) {
   res.send("Secured Resource");
@@ -39,7 +55,7 @@ server.get("/authorized", function (req, res) {
 
 // //* req.isAuthenticated is provided from the auth router
 
-// server.use("/login", auth0Router);
+//? server.use("/login", auth0Router);
 
 server.get("/", async (req, res) => {
   try {

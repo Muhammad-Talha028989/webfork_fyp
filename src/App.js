@@ -9,32 +9,32 @@ import { useAuth0 } from "@auth0/auth0-react";
 import Cart from "./components/Cart";
 
 function App() {
-  // const { getAccessTokenSilently, isAuthenticated, user } = useAuth0();
+  const { getAccessTokenSilently, isAuthenticated, user } = useAuth0();
 
-  // useEffect(() => {
-  //   const token = isAuthenticated ? getAccessTokenSilently() : null;
-  //   const getResponse = async () => {
-  //     try {
-  //       await axios
-  //         .get("/", {
-  //           headers: {
-  //             Authorization: `Bearer ${token}`,
-  //           },
-  //         })
-  //         .then((response) => console.log(response?.data))
-  //         .catch((error) => console.log(error));
-  //       const requires = await axios.post("/", {
-  //         data: {
-  //           user,
-  //         },
-  //       });
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   };
+  useEffect(() => {
+    const token = isAuthenticated ? getAccessTokenSilently() : null;
+    const getResponse = async () => {
+      try {
+        await axios
+          .get("/", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          })
+          .then((response) => console.log(response?.data))
+          .catch((error) => console.log(error));
+        const requires = await axios.post("/", {
+          data: {
+            user,
+          },
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    };
 
-  //   isAuthenticated && getResponse().catch((e) => console.log(e));
-  // }, [getAccessTokenSilently, isAuthenticated]);
+    isAuthenticated && getResponse().catch((e) => console.log(e));
+  }, [getAccessTokenSilently, isAuthenticated]);
 
   return (
     <BrowserRouter>
