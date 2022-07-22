@@ -4,6 +4,7 @@ import { AiFillDelete } from "react-icons/ai";
 import useCartState from "../store/cartStore/CartStore";
 // import Rating from "./Rating";
 import "../styles/Cart.css";
+//?fuck the git
 
 const Cart = () => {
   const CartState = useCartState((state) => state.CartState);
