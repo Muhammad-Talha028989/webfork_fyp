@@ -1,6 +1,4 @@
 import React, { useEffect } from "react";
-import PreNavbar from "../PreNavbar";
-import Navbar from "../Navbar";
 import Hero from "../Hero";
 import data from "../../data/data.json";
 import Heading from "../Heading";
@@ -14,9 +12,6 @@ import Product from "../Product";
 function HomePage() {
   return (
     <>
-      <PreNavbar />
-      <Navbar />
-
       <Hero />
 
       <Heading text="WebFork Features" />

@@ -7,6 +7,8 @@ import HomePage from "./components/home/homepage";
 import axios from "axios";
 import { useAuth0 } from "@auth0/auth0-react";
 import Cart from "./components/Cart";
+import Navbar from "./components/Navbar";
+import PreNavbar from "./components/PreNavbar";
 
 function App() {
   // const { getAccessTokenSilently, isAuthenticated, user } = useAuth0();
@@ -38,6 +40,8 @@ function App() {
 
   return (
     <BrowserRouter>
+    <PreNavbar />
+    <Navbar />
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/Blogs" element={<Blogs />} />

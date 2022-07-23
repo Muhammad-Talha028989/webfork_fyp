@@ -12,23 +12,12 @@
 
 
 .logo{
-    background-color: orangered;
-    width: 58px;
-    border-radius: 20px;
-    overflow: hidden;
-    cursor: pointer;
-    position: relative;
-    right: 2vmax;
-}
+    background-color: #fff;
 
-#logoImage{
-    transition:all 0.2s;
-    transform: translateX(-58px);
 }
-
-#logoImage:hover{
-  
-    transform: translateX(0);
+.logo-img{
+    height: 100px;
+    width: 100px;    
 }
 
 .navlinks{
@@ -61,8 +50,7 @@
     font-weight: 100;
     
   }
- 
   
-  .searchbox > svg{
+.searchbox > svg{
     fill: rgb(61, 61, 61);
 }
