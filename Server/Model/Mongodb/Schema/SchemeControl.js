@@ -8,7 +8,7 @@ let Auth0User_Schema = new Schema({
   name: String,
   picture: String,
   email: String,
-  templateDownload: Array,
+  templateDownload: [Object],
 });
 
 module.exports = Auth0User_Schema;

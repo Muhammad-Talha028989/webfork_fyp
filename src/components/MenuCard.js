@@ -6,13 +6,15 @@ const MenuCard = ({ menuData }) => {
   const { getAccessTokenSilently } = useAuth0();
   // console.log(menuData)
   const addCarts = useCartStore((state) => state.addCarts);
+
   const addToCartStore = (payload) => [addCarts(payload)];
 
   const HandleCart = async (payload) => {
     addToCartStore(payload);
     let token = await getAccessTokenSilently();
+
     await axios.post(
-      "/",
+      "/cart",
       {
         data: {
           payload,
@@ -25,7 +27,6 @@ const MenuCard = ({ menuData }) => {
       },
     );
   };
-
   return (
     <>
       <section className="main-card--container">

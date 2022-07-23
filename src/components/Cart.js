@@ -1,16 +1,17 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Button, Col, Form, Image, ListGroup, Row } from "react-bootstrap";
 import { AiFillDelete } from "react-icons/ai";
 import useCartState from "../store/cartStore/CartStore";
 // import Rating from "./Rating";
 import "../styles/Cart.css";
 
-
 const Cart = () => {
   const CartState = useCartState((state) => state.CartState);
   const removeCart = useCartState((state) => state.removeCart);
   const [cart, setCart] = useState();
   const [total, setTotal] = useState();
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     setCart(CartState);
@@ -26,8 +27,8 @@ const Cart = () => {
     <div className="home">
       <div className="productContainer">
         <ListGroup>
-          {cart?.map((prod) => (
-            <ListGroup.Item key={prod.id}>
+          {cart?.map((prod, index) => (
+            <ListGroup.Item key={index}>
               <Row>
                 <Col md={2}>
                   <Image src={prod.image} alt={prod.name} fluid rounded />

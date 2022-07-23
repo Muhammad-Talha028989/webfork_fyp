@@ -20,6 +20,8 @@ const jwks = require("jwks-rsa");
 
 const AuthRoutes = require("./Auth0/postAuth0/AuthRouteProtected/AuthRoute");
 
+const CartRoutes = require("./Routers/CartRouters");
+
 var jwtCheck = jwt({
   secret: jwks.expressJwtSecret({
     cache: true,
@@ -49,6 +51,8 @@ ConnectToMongodb("webfork", "webfork", "WebFork").catch((e) => console.log(e));
 //?
 
 server.use("/", AuthRoutes);
+
+server.use("/cart", CartRoutes);
 
 server.use((req, res, next) => {
   const error = new Error("Not Found");
