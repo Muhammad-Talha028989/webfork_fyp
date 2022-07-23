@@ -4,6 +4,8 @@ const axios = require("axios");
 
 const Auth0User = require("../../../Model/Mongodb/Modeling/ModelingControl");
 
+const TemplateCollection = require("../../../Model/Mongodb/Modeling/TemplateModeling/TemplateModel");
+
 const AuthRoutes = express.Router();
 
 AuthRoutes.get("/", async (req, res) => {
@@ -15,6 +17,13 @@ AuthRoutes.get("/", async (req, res) => {
 
 AuthRoutes.post("/", async (req, res) => {
   try {
+    console.log(req?.body?.data);
+    if (req?.body?.data?.payload) {
+      const TemplateDoc = new TemplateCollection({
+        TemplateObject: req?.body?.data,
+      });
+      TemplateDoc.save();
+    }
     const accessToken = await req?.headers?.authorization?.split(" ")[1];
     const response = await axios.get(
       "https://webfork-028989.us.auth0.com/userinfo",
@@ -32,9 +41,7 @@ AuthRoutes.post("/", async (req, res) => {
           nickname: response?.data?.nickname,
           name: response?.data?.name,
           picture: response?.data?.picture,
-          updated_at: response?.data?.updated_at,
           email: response?.data?.email,
-          email_verified: response?.data?.email_verified,
           templateDownload: [],
         })
       : "";
@@ -48,18 +55,15 @@ AuthRoutes.post("/", async (req, res) => {
               nickname: response?.data?.nickname,
               name: response?.data?.name,
               picture: response?.data?.picture,
-              updated_at: response?.data?.updated_at,
               email: response?.data?.email,
-              email_verified: response?.data?.email_verified,
-              templateDownload: [
-                {
-                  name: "Boostrap Template",
-                },
-              ],
+              templateDownload: results?.templateDownload,
+            },
+            {
+              overwrite: true,
             },
             (err, updateResponse) => {
               if (!err) {
-                console.log(updateResponse);
+                // console.log(updateResponse);
               }
             },
           );

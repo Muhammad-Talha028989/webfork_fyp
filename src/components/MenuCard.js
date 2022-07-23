@@ -1,9 +1,31 @@
 import React from "react";
 import useCartStore from "../store/cartStore/CartStore";
+import axios from "axios";
+import { useAuth0 } from "@auth0/auth0-react";
 const MenuCard = ({ menuData }) => {
+  const { getAccessTokenSilently } = useAuth0();
   // console.log(menuData)
   const addCarts = useCartStore((state) => state.addCarts);
   const addToCartStore = (payload) => [addCarts(payload)];
+
+  const HandleCart = async (payload) => {
+    addToCartStore(payload);
+    let token = await getAccessTokenSilently();
+    await axios.post(
+      "/",
+      {
+        data: {
+          payload,
+        },
+      },
+      {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      },
+    );
+  };
+
   return (
     <>
       <section className="main-card--container">
@@ -33,7 +55,7 @@ const MenuCard = ({ menuData }) => {
                       href={`https://drive.google.com/u/0/uc?id=1PveLwbsppBvSx43kwKBtTJaPo2RoG57D&export=download`}
                       target="_blank"
                       rel={"noreferrer"}
-                      onClick={(e) => addToCartStore(curElem)}
+                      onClick={(e) => HandleCart(curElem)}
                     >
                       Download Now
                     </a>
