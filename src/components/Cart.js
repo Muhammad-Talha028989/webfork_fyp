@@ -1,17 +1,19 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import { Button, Col, Form, Image, ListGroup, Row } from "react-bootstrap";
 import { AiFillDelete } from "react-icons/ai";
 import useCartState from "../store/cartStore/CartStore";
+import { useAuth0 } from "@auth0/auth0-react";
 // import Rating from "./Rating";
 import "../styles/Cart.css";
 
+import axios from "axios";
+
 const Cart = () => {
+  const { getAccessTokenSilently } = useAuth0();
   const CartState = useCartState((state) => state.CartState);
   const removeCart = useCartState((state) => state.removeCart);
   const [cart, setCart] = useState();
   const [total, setTotal] = useState();
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     setCart(CartState);
@@ -21,7 +23,7 @@ const Cart = () => {
         0,
       ),
     );
-  }, [CartState, cart]);
+  }, [CartState, getAccessTokenSilently]);
 
   return (
     <div className="home">

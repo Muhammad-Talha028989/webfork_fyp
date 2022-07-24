@@ -9,15 +9,15 @@ const MenuCard = ({ menuData }) => {
 
   const addToCartStore = (payload) => [addCarts(payload)];
 
-  const HandleCart = async (payload) => {
-    addToCartStore(payload);
+  const HandleCart = async (Cart) => {
+    addToCartStore(Cart);
     let token = await getAccessTokenSilently();
 
     await axios.post(
       "/cart",
       {
         data: {
-          payload,
+          Cart,
         },
       },
       {

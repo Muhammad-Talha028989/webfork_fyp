@@ -13,6 +13,9 @@ const ConnectToMongodb = require("./Model/Connectivity/Connect-To-Mongodb");
 const server = express();
 
 const axios = require("axios");
+const GetProtectedData = require("./Auth0/postAuth0/Auth0Cells/GetProtectedCell");
+
+const Auth0User = require("./Model/Mongodb/Modeling/ModelingControl");
 
 const jwt = require("express-jwt").expressjwt;
 
@@ -32,13 +35,18 @@ var jwtCheck = jwt({
   audience: "webfork",
   issuer: "https://webfork-028989.us.auth0.com/",
   algorithms: ["RS256"],
-}).unless({ path: ["/"] });
+}).unless({ path: ["*"] });
 
 server.use(bodyParser.urlencoded({ extended: false }));
 server.use(bodyParser.json({}));
 server.use(express.json({}));
 
-server.use(cors());
+server.use(
+  cors({
+    origin: "*",
+    method: ["GET", "POST"],
+  }),
+);
 server.use(helmet());
 
 let port = process.env.PORT || process.env._ALT_PORT;
