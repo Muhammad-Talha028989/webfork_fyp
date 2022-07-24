@@ -2,7 +2,7 @@ const GetProtectedData = require("../Auth0Cells/GetProtectedCell");
 
 const Auth0User = require("../../../Model/Mongodb/Modeling/ModelingControl");
 
-const StoreDataToMongoDB = async (req, res) => {
+const StoreDataToMongoDB = async (req, _res) => {
   try {
     const accessToken = req?.headers?.authorization?.split(" ")[1];
     const response = await GetProtectedData(accessToken);
@@ -19,13 +19,18 @@ const StoreDataToMongoDB = async (req, res) => {
         })
       : "";
     if (Auth0Docu) {
-      Auth0User.findOne({ sub: response?.data?.sub }, (err, results) => {
-        if (results !== null) {
-        } else {
-          console.log("New Document is added into database");
-          return Auth0Docu && Auth0Docu.save();
-        }
-      });
+      Auth0User.findOne(
+        { sub: response?.data?.sub },
+
+        (err, results) => {
+          if (results === null || results === undefined) {
+            console.log("New Document is added into database");
+            return Auth0Docu && Auth0Docu.save();
+          } else {
+            _res.send(results?.templateDownload);
+          }
+        },
+      );
     }
     // Auth0Docu && Auth0Docu.save();
   } catch (error) {

@@ -11,9 +11,8 @@ CartRoutes.get("/", (req, res) => {
   });
 });
 
-CartRoutes.post("/", (req, res) => {
+CartRoutes.post("/", async (req, res) => {
   StoreCartDetailIntoDatabase(req, res);
-  res.send("");
 });
 
 module.exports = CartRoutes;

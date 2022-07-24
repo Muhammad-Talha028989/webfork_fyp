@@ -62,6 +62,34 @@ server.use("/", AuthRoutes);
 
 server.use("/cart", CartRoutes);
 
+server.post("/delete", async (req, res) => {
+  const cartDetails = req?.body?.data;
+  const accessToken = req?.headers?.authorization?.split(" ")[1];
+  const response = await GetProtectedData(accessToken);
+  Auth0User.findOneAndUpdate(
+    { sub: response?.data?.sub },
+    {
+      $pull: {
+        templateDownload: {
+          $in: [cartDetails],
+        },
+        Cart: { name: cartDetails?.name },
+      },
+    },
+    {
+      returnDocument: "after",
+    },
+    function (err, result) {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log(result);
+        res.send(result);
+      }
+    },
+  );
+});
+
 server.use((req, res, next) => {
   const error = new Error("Not Found");
   error.status = 404;

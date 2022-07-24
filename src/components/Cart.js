@@ -3,6 +3,8 @@ import { Button, Col, Form, Image, ListGroup, Row } from "react-bootstrap";
 import { AiFillDelete } from "react-icons/ai";
 import useCartState from "../store/cartStore/CartStore";
 import { useAuth0 } from "@auth0/auth0-react";
+import useCartPageStore from "../store/CartpageStore/CartPageStore";
+
 // import Rating from "./Rating";
 import "../styles/Cart.css";
 
@@ -10,43 +12,47 @@ import axios from "axios";
 
 const Cart = () => {
   const { getAccessTokenSilently } = useAuth0();
-  const CartState = useCartState((state) => state.CartState);
-  const removeCart = useCartState((state) => state.removeCart);
+  const CartState = useCartState((state) => state?.CartState);
+  const removeCart = useCartState((state) => state?.removeCart);
   const [cart, setCart] = useState();
   const [total, setTotal] = useState();
-
+  const CartPageStoreObjects = useCartPageStore(
+    (state) => state?.CartPageStoreObject,
+  );
+  const addCartPage = useCartPageStore((state) => state?.addCartPage);
+  const removeCartPage = useCartPageStore((state) => state?.removeCartPage);
   useEffect(() => {
-    setCart(CartState);
+    setCart(CartPageStoreObjects);
     setTotal(
-      CartState?.reduce(
-        (acc, curr) => acc + Number(curr?.price) * curr?.qty,
+      CartPageStoreObjects?.reduce(
+        (acc, curr) => acc + Number(curr?.Cart?.price) * curr?.Cart?.qty,
         0,
       ),
     );
-  }, [CartState, getAccessTokenSilently]);
+  }, [CartPageStoreObjects]);
 
   return (
     <div className="home">
       <div className="productContainer">
         <ListGroup>
-          {cart?.map((prod, index) => (
+          {CartPageStoreObjects?.map(({ Cart }, index) => (
             <ListGroup.Item key={index}>
               <Row>
                 <Col md={2}>
-                  <Image src={prod.image} alt={prod.name} fluid rounded />
+                  <Image src={Cart?.image} alt={Cart?.name} fluid rounded />
                 </Col>
                 <Col md={2}>
-                  <span>{prod.name}</span>
+                  <span>{Cart?.name}</span>
                 </Col>
-                <Col md={2}>₹ {prod.price}</Col>
-                <Col md={2}>{/* <Rating rating={prod.ratings} /> */}</Col>
+                <Col md={2}>₹ {Cart?.price}</Col>
+                <Col md={2}>{/* <Rating rating={Cart.ratings} /> */}</Col>
                 <Col md={2}>
                   {/* <Form.Control
                     as="select"
-                    value={prod.qty}
+                    value={Cart.qty}
                     onChange={(e) => e}
                   >
-                     {[...Array(prod.inStock).keys()].map((x) => (
+                     {[...Array(Cart.inStock).keys()].map((x) => (
                       <option key={x + 1}>{x + 1}</option>
                     ))} 
                   </Form.Control> */}
@@ -55,8 +61,24 @@ const Cart = () => {
                   <Button
                     type="button"
                     variant="light"
-                    onClick={() => {
-                      removeCart(prod);
+                    onClick={async () => {
+                      removeCartPage(Cart);
+                      let token = await getAccessTokenSilently();
+
+                      let updateResponse = axios.post(
+                        "/delete",
+                        {
+                          data: {
+                            Cart,
+                          },
+                        },
+                        {
+                          headers: {
+                            authorization: `Bearer ${token}`,
+                          },
+                        },
+                      );
+
                     }}
                   >
                     <AiFillDelete fontSize="20px" />
@@ -68,11 +90,13 @@ const Cart = () => {
         </ListGroup>
       </div>
       <div className="filters summary">
-        <span className="title">Subtotal ({cart?.length}) items</span>
+        <span className="title">
+          Subtotal ({CartPageStoreObjects?.length}) items
+        </span>
         <span
           style={{ fontWeight: 700, fontSize: 20 }}
         >{` Total: ₹ ${total}`}</span>
-        <Button type="button" disabled={cart?.length === 0}>
+        <Button type="button" disabled={CartPageStoreObjects?.length === 0}>
           Proceed to Checkout
         </Button>
       </div>

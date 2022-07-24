@@ -2,7 +2,7 @@ const Auth0User = require("../Model/Mongodb/Modeling/ModelingControl");
 
 const GetProtectedData = require("../Auth0/postAuth0/Auth0Cells/GetProtectedCell");
 
-const StoreCartDetailIntoDatabase = async (req, res) => {
+const StoreCartDetailIntoDatabase = async (req, _res) => {
   try {
     const cartDetails = req?.body?.data;
     const accessToken = req?.headers?.authorization?.split(" ")[1];
@@ -14,9 +14,13 @@ const StoreCartDetailIntoDatabase = async (req, res) => {
           templateDownload: cartDetails,
         },
       },
-      (err,result) => {
-        if (result !== null) {
-          console.log("Cart is Added into Database");
+      {
+        returnDocument: "after",
+      },
+      (err, result) => {
+        if (result !== null || result !== undefined || !err) {
+          // result?.templateDownload?.map(items => console.log(items))
+          _res?.send(result?.templateDownload);
         } else {
           console.log("Document not available");
         }

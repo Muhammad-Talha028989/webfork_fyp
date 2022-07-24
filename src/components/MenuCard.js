@@ -1,31 +1,44 @@
 import React from "react";
 import useCartStore from "../store/cartStore/CartStore";
 import axios from "axios";
+import useCartPageStore from "../store/CartpageStore/CartPageStore";
 import { useAuth0 } from "@auth0/auth0-react";
 const MenuCard = ({ menuData }) => {
-  const { getAccessTokenSilently } = useAuth0();
+  const { getAccessTokenSilently, loginWithPopup, isAuthenticated } =
+    useAuth0();
   // console.log(menuData)
-  const addCarts = useCartStore((state) => state.addCarts);
-
+  const addCarts = useCartStore((state) => state?.addCarts);
+  const addCartPage = useCartPageStore((state) => state?.addCartPage);
   const addToCartStore = (payload) => [addCarts(payload)];
+  const addToCartPageStore = (payload) => addCartPage(payload);
 
   const HandleCart = async (Cart) => {
-    addToCartStore(Cart);
-    let token = await getAccessTokenSilently();
+    setTimeout(async () => {
+      if (isAuthenticated) {
+        let token = await getAccessTokenSilently({});
+        addToCartStore(Cart);
 
-    await axios.post(
-      "/cart",
-      {
-        data: {
-          Cart,
-        },
-      },
-      {
-        headers: {
-          authorization: `Bearer ${token}`,
-        },
-      },
-    );
+        const data = await axios.post(
+          "/cart",
+          {
+            data: {
+              Cart,
+            },
+          },
+          {
+            headers: {
+              authorization: `Bearer ${token}`,
+            },
+          },
+        );
+        // data?.data?.forEach((element) => {
+        //   addToCartPageStore(element);
+        // });
+        window.location.reload();
+      } else {
+        loginWithPopup();
+      }
+    }, 2000);
   };
   return (
     <>
@@ -51,10 +64,14 @@ const MenuCard = ({ menuData }) => {
                     alt="card-images"
                     className="card-media"
                   />
+
                   <span className="card-tag subtle">
                     <a
-                      href={`https://drive.google.com/u/0/uc?id=1PveLwbsppBvSx43kwKBtTJaPo2RoG57D&export=download`}
-                      target="_blank"
+                      href={() =>
+                        isAuthenticated &&
+                        `https://drive.google.com/u/0/uc?id=1PveLwbsppBvSx43kwKBtTJaPo2RoG57D&export=download`
+                      }
+                      target=""
                       rel={"noreferrer"}
                       onClick={(e) => HandleCart(curElem)}
                     >

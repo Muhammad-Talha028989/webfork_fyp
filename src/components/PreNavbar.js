@@ -4,6 +4,8 @@ import "../styles/PreNavbar.css";
 import { useAuth0 } from "@auth0/auth0-react";
 import axios from "axios";
 import useCartStore from "../store/cartStore/CartStore";
+import useCartPageStore from "../store/CartpageStore/CartPageStore";
+
 const cartIcon = (
   <svg
     className="temp"
@@ -22,6 +24,10 @@ const PreNavbar = () => {
   const CartState = useCartStore((state) => state.CartState);
   const { loginWithRedirect, isAuthenticated, logout } = useAuth0();
   const [isAuth, setIsAuth] = useState();
+  const CartPageStoreObjects = useCartPageStore(
+    (state) => state.CartPageStoreObject,
+  );
+
   useEffect(() => {
     setTimeout(() => {
       setIsAuth(isAuthenticated);
@@ -46,7 +52,7 @@ const PreNavbar = () => {
         <span>|</span>
         <Link to="/cart">
           {" "}
-          {cartIcon} CART ({CartState.length})
+          {cartIcon} CART ({CartPageStoreObjects?.length})
         </Link>
       </div>
     </div>

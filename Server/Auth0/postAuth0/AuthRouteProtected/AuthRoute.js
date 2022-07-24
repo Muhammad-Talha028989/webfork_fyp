@@ -5,10 +5,7 @@ const StoreDataToMongoDB = require("./Auth0Functional");
 const AuthRoutes = express.Router();
 
 AuthRoutes.get("/", async (req, res) => {
-  res.send({
-    message: "Nothing to show",
-    code: 404,
-  });
+  // StoreDataToMongoDB(req, res);
 });
 
 AuthRoutes.post("/", (req, res) => {
