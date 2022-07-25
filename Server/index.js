@@ -1,13 +1,24 @@
 require("dotenv").config();
+
 const express = require("express");
+
 const cors = require("cors");
-// const { auth } = require("express-openid-connect");
+
+const helmet = require("helmet");
+
 const bodyParser = require("body-parser");
 
+const ConnectToMongodb = require("./Model/Connectivity/Connect-To-Mongodb");
+
 const server = express();
+
 const axios = require("axios");
+
 const jwt = require("express-jwt").expressjwt;
+
 const jwks = require("jwks-rsa");
+
+const AuthRoutes = require("./Auth0/postAuth0/AuthRouteProtected/AuthRoute");
 
 var jwtCheck = jwt({
   secret: jwks.expressJwtSecret({
@@ -21,46 +32,23 @@ var jwtCheck = jwt({
   algorithms: ["RS256"],
 }).unless({ path: ["/"] });
 
-// //* auth router attaches /login, /logout, and /callback routes to the baseURL
-// server.use(auth(config));
 server.use(bodyParser.urlencoded({ extended: false }));
 server.use(bodyParser.json({}));
 server.use(express.json({}));
 
 server.use(cors());
+server.use(helmet());
 
 let port = process.env.PORT || process.env._ALT_PORT;
 
 server.use(jwtCheck);
 
-server.get("/authorized", function (req, res) {
-  res.send("Secured Resource");
-});
+//?
+ConnectToMongodb("webfork", "webfork", "WebFork").catch((e) => console.log(e));
 
-// //* req.isAuthenticated is provided from the auth router
+//?
 
-// server.use("/login", auth0Router);
-
-server.get("/", async (req, res) => {
-  try {
-    const accessToken = await req?.headers?.Authorization?.split(" ")[1];
-    const response = await axios.get(
-      "https://webfork-028989.us.auth0.com/userinfo",
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      },
-    );
-    console.log(response);
-  } catch (error) {
-    console.log(error);
-  }
-});
-
-server.post("/", (req, res) => {
-  // console.log(req?.body);
-});
+server.use("/", AuthRoutes);
 
 server.use((req, res, next) => {
   const error = new Error("Not Found");

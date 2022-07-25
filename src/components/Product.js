@@ -13,7 +13,7 @@ const Product = () => {
         setMenuData(updatedList);
     };
   return (
-    <>
+    <div id="Categories">
     <nav className="navbar-filter">
         <div className="btn-group">
             <button className="btn-group__item" onClick={()=> filterItem("Gym")}>Gym</button>
@@ -25,7 +25,7 @@ const Product = () => {
         </div>
     </nav>
     <MenuCard menuData={menuData} />                 
-    </>
+    </div>
   )
 }
 
