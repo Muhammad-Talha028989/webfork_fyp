@@ -7,17 +7,25 @@ import HomePage from "./components/home/homepage";
 import axios from "axios";
 import { useAuth0 } from "@auth0/auth0-react";
 import Cart from "./components/Cart";
+<<<<<<< HEAD
 import Navbar from "./components/Navbar";
 import PreNavbar from "./components/PreNavbar";
+=======
+import useCartPageStore from "./store/CartpageStore/CartPageStore";
+>>>>>>> a38e6fac162bfbdba4f51b85a88d1f06106f8a1b
 
 function App() {
   const { getAccessTokenSilently, isAuthenticated, user } = useAuth0();
-
+  const addCartPage = useCartPageStore((state) => state?.addCartPage);
+  const CartPageStoreObject = useCartPageStore(
+    (state) => state?.CartPageStoreObject,
+  );
   useEffect(() => {
+    const addToCartPageStore = (payload) => addCartPage(payload);
     const getResponse = async () => {
       const token = isAuthenticated && (await getAccessTokenSilently());
       try {
-        await axios.post(
+        let response = await axios.post(
           "/",
           {
             data: {
@@ -30,13 +38,17 @@ function App() {
             },
           },
         );
+
+        response?.data?.forEach((element) => {
+          addToCartPageStore(element);
+        });
       } catch (error) {
         console.log(error);
       }
     };
 
     isAuthenticated && getResponse().catch((e) => console.log(e));
-  }, [getAccessTokenSilently, isAuthenticated, user]);
+  }, [addCartPage, getAccessTokenSilently, isAuthenticated, user]);
 
   return (
     <BrowserRouter>
