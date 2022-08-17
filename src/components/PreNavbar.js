@@ -3,8 +3,8 @@ import { Link } from "react-router-dom";
 import "../styles/PreNavbar.css";
 import { useAuth0 } from "@auth0/auth0-react";
 import axios from "axios";
-import useCartStore from "../store/cartStore/CartStore";
 import useCartPageStore from "../store/CartpageStore/CartPageStore";
+import shallow from "zustand/shallow";
 
 const cartIcon = (
   <svg
@@ -21,18 +21,21 @@ const cartIcon = (
 );
 
 const PreNavbar = () => {
-  const CartState = useCartStore((state) => state.CartState);
-  const { loginWithRedirect, isAuthenticated, logout } = useAuth0();
-  const [isAuth, setIsAuth] = useState();
+  const { loginWithRedirect, isAuthenticated, logout, getAccessTokenSilently } =
+    useAuth0();
   const CartPageStoreObjects = useCartPageStore(
     (state) => state.CartPageStoreObject,
+    shallow,
   );
-
-  useEffect(() => {
-    setTimeout(() => {
-      setIsAuth(isAuthenticated);
-    }, 1000);
-  }, [isAuthenticated]);
+  const [arrayCart, setArrayCart] = useState([]);
+  const getDataFromDatabase = async () => {
+    let token = await getAccessTokenSilently();
+    return await axios.get("/cart/data", {
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+    });
+  };
   return (
     <div className="preNav">
       <div>
@@ -45,14 +48,19 @@ const PreNavbar = () => {
         {/* <a  href="/#">SIGN IN</a> <span>|</span> */}
         <Link
           to="/login"
-          onClick={() => (isAuth ? logout({}) : loginWithRedirect())}
+          onClick={() => (isAuthenticated ? logout({}) : loginWithRedirect())}
         >
-          {isAuth ? "LOGOUT" : "SiGN UP"}
+          {isAuthenticated ? "LOGOUT" : "SiGN UP"}
         </Link>
         <span>|</span>
         <Link to="/cart">
-          {" "}
-          {cartIcon} CART ({CartPageStoreObjects?.length})
+          {cartIcon} CART (
+          {isAuthenticated
+            ? typeof CartPageStoreObjects === "undefined"
+              ? 0
+              : CartPageStoreObjects?.length
+            : 0}
+          )
         </Link>
       </div>
     </div>

@@ -39,7 +39,7 @@ var jwtCheck = jwt({
 
 server.use(bodyParser.urlencoded({ extended: false }));
 server.use(bodyParser.json({}));
-server.use(express.json({}));
+// server.use(express.json({}));
 
 server.use(
   cors({
@@ -54,7 +54,9 @@ let port = process.env.PORT || process.env._ALT_PORT;
 server.use(jwtCheck);
 
 //?
-ConnectToMongodb("webfork", "webfork", "WebFork").catch((e) => console.log(e));
+ConnectToMongodb("webfork", "webfork", "WebFork").catch((e) =>
+  console.error(e),
+);
 
 //?
 
@@ -62,32 +64,61 @@ server.use("/", AuthRoutes);
 
 server.use("/cart", CartRoutes);
 
-server.post("/delete", async (req, res) => {
-  const cartDetails = req?.body?.data;
+server.get("/cart/data", async (req, res) => {
   const accessToken = req?.headers?.authorization?.split(" ")[1];
-  const response = await GetProtectedData(accessToken);
-  Auth0User.findOneAndUpdate(
-    { sub: response?.data?.sub },
-    {
-      $pull: {
-        templateDownload: {
-          $in: [cartDetails],
+  if (typeof accessToken === String || typeof accessToken === "string") {
+    await axios
+      .get("https://webfork-028989.us.auth0.com/userinfo", {
+        headers: {
+          authorization: `Bearer ${accessToken}`,
         },
-        Cart: { name: cartDetails?.name },
-      },
-    },
-    {
-      returnDocument: "after",
-    },
-    function (err, result) {
-      if (err) {
-        console.log(err);
-      } else {
-        console.log(result);
-        res.send(result);
-      }
-    },
-  );
+      })
+      .then((response) => {
+        // console.info(response?.data);
+        Auth0User.findOne({ sub: response?.data?.sub }, (err, UserData) => {
+          res.send(UserData?.templateDownload);
+        });
+      })
+      .catch((e) => console.error(e.message));
+  } else {
+    console.error("Wrong accessToken");
+  }
+});
+
+server.post("/delete", async (req, res) => {
+  try {
+    const cartDetails = req?.body?.data;
+    console.log(cartDetails);
+    const accessToken = req?.headers?.authorization?.split(" ")[1];
+    await GetProtectedData(accessToken)
+      ?.then((response) =>
+        Auth0User?.updateOne(
+          { sub: response?.data?.sub },
+          {
+            $pull: {
+              templateDownload: {
+                $in: [cartDetails],
+              },
+              Cart: { name: cartDetails?.name },
+            },
+          },
+          {
+            returnDocument: "after",
+          },
+          (err, result) => {
+            if (err) {
+              console.log(err);
+            } else {
+              console.log(result);
+              // res.send(result);
+            }
+          },
+        ),
+      )
+      ?.catch((e) => console.error(e));
+  } catch (e) {
+    console.log(e);
+  }
 });
 
 server.use((req, res, next) => {
